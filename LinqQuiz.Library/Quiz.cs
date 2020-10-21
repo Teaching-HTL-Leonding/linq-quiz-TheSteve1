@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,11 @@ namespace LinqQuiz.Library
         /// </exception>
         public static int[] GetEvenNumbers(int exclusiveUpperLimit)
         {
-            throw new NotImplementedException();
+            if (exclusiveUpperLimit <= 0) throw new ArgumentOutOfRangeException("limit needs to be greater than 0");
+            return Enumerable.Range(1, exclusiveUpperLimit - 1)
+                    .Where(n => n % 2 ==0)
+                    .ToArray();
+                
         }
 
         /// <summary>
@@ -33,7 +37,13 @@ namespace LinqQuiz.Library
         /// </remarks>
         public static int[] GetSquares(int exclusiveUpperLimit)
         {
-            throw new NotImplementedException();
+            if (exclusiveUpperLimit > Math.Sqrt(int.MaxValue)) throw new OverflowException();
+            if (exclusiveUpperLimit <= 0) return Array.Empty<int>();
+                return Enumerable.Range(1, exclusiveUpperLimit - 1)
+                    .Select(n => n * n)
+                    .Where(n => n % 7 == 0)
+                    .OrderByDescending(n => n)
+                    .ToArray();
         }
 
         /// <summary>
@@ -52,7 +62,15 @@ namespace LinqQuiz.Library
         /// </remarks>
         public static FamilySummary[] GetFamilyStatistic(IReadOnlyCollection<IFamily> families)
         {
-            throw new NotImplementedException();
+            if (families == null) throw new ArgumentNullException("families cant be null");
+            return families.Select(family => new FamilySummary
+                {
+                    FamilyID = family.ID,
+                    NumberOfFamilyMembers = family.Persons.Count,
+                    AverageAge = family.Persons.Count == 0
+                        ? 0
+                        : family.Persons.Select(p => p.Age).Average()
+                }).ToArray();
         }
 
         /// <summary>
@@ -70,7 +88,12 @@ namespace LinqQuiz.Library
         /// </remarks>
         public static (char letter, int numberOfOccurrences)[] GetLetterStatistic(string text)
         {
-            throw new NotImplementedException();
+            return text
+                .ToUpper()
+                .Where(i => i <= 'Z' && 'A' <= i)
+                .GroupBy(i => i)
+                .Select(i => (i.Key, i.Count()))
+                .ToArray();
         }
     }
 }
